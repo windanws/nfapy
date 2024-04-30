@@ -2,7 +2,9 @@ import socket
 import dpkt
 import pyshark
 import networkx as nx
+import pandas as pd
 import matplotlib.pyplot as plt
+
 
 pcapOP = 'wlan.pcap'
 
@@ -31,14 +33,24 @@ def getPackets(pcap):
     return packets, timestamp
 
 
+def visualMap(packets):
+    for src_ip, dst_ip in packets:
+         
+    
+    
+    
+    
+
 
 def main():
-    packets, timestamps  = getPackets(pcapOP)
+    packets, timestamps, src, dst  = getPackets(pcapOP)
+    visualMap(packets)
+    
 
+    '''
     for src_ip, dst_ip in packets:
         print(f"Source IP: {src_ip}\nDestination IP: {dst_ip}\n")
-
-
+    '''
 
 
 
