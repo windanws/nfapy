@@ -1,12 +1,12 @@
 import socket
 import dpkt
-import pyshark
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
 pcapOP = 'wlan.pcap'
+
 
 def getPackets(pcap):
     packets = [] 
@@ -33,25 +33,25 @@ def getPackets(pcap):
     return packets, timestamp
 
 
-def visualMap(packets):
-    for src_ip, dst_ip in packets:
-         
-    
-    
-    
+def dataFrameNetwork(packets):
+    df = pd.DataFrame(packets, columns=['Source IP', 'Destination IP']) 
+    return df 
     
 
 
 def main():
-    packets, timestamps, src, dst  = getPackets(pcapOP)
-    visualMap(packets)
+    packets, timestamps = getPackets(pcapOP)
     
+    df = dataFrameNetwork(packets)
+    df = df.sample(n=100) 
+    G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
+    nx.draw_networkx(G)
+    plt.show()
 
     '''
     for src_ip, dst_ip in packets:
         print(f"Source IP: {src_ip}\nDestination IP: {dst_ip}\n")
     '''
-
 
 
 
