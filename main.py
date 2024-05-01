@@ -3,9 +3,8 @@ import dpkt
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
 
-
-pcapOP = 'wlan.pcap'
 
 
 def getPackets(pcap):
@@ -47,21 +46,36 @@ def graphGen(df):
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
     plt.figure("Graph", figsize=(12,8), dpi=100)
     nx.draw_networkx(G)
-
+    print("<CTRL-w> to Close Graph")
+    plt.show()
 
 def printPackets(packets):
     for src_ip, dst_ip in packets:
         print(f"Source IP: {src_ip}\nDestination IP: {dst_ip}\n")
     
-    
+
+
+def getArgs(argv=None):
+    parser = argparse.ArgumentParser(description = "NFApy - Network Forensic Analytical Tool")
+    parser.add_argument("filename", help = "Specify PCAP file")
+    parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
+
+
+    return parser.parse_args(argv)
+
+
+
 def main():
-    packets, timestamps = getPackets(pcapOP)
+    args = getArgs()
 
+    packets, timestamps = getPackets(args.filename)
     df = dataFrameNetwork(packets)
-    graphGen(df)
-    plt.show()
 
 
+    if args.graph == True:
+        graphGen(df)
+    else:
+        pass
 
 
 
