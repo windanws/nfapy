@@ -27,7 +27,9 @@ def getPackets(pcap):
                 timestamp.append(ts)
             except KeyboardInterrupt:
                 sys.exit(0)
-            except: continue
+            except: 
+                continue
+
     return packets, timestamp
 
 
@@ -39,6 +41,7 @@ def dataFrameNetwork(packets):
 
 
 def graphGen(df, sampleAmount):
+
     plt.rcParams['toolbar'] = 'None'
     plt.rcParams['keymap.quit'] = ['ctrl+w']
     print("=== Processing Graph===")
@@ -48,6 +51,8 @@ def graphGen(df, sampleAmount):
     nx.draw_networkx(G)
     print("<CTRL-w> to Close Graph")
     plt.show()
+
+     
 
 def printPackets(packets):
     for src_ip, dst_ip in packets:
@@ -62,6 +67,7 @@ def getArgs(argv=None):
     parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
     
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
+
 
     return parser.parse_args(argv)
 
