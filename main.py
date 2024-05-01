@@ -45,7 +45,6 @@ def dataFrameNetwork(packets, save):
 
 
 def graphGen(df, sampleAmount):
-
     plt.rcParams['toolbar'] = 'None'
     plt.rcParams['keymap.quit'] = ['ctrl+w']
     print("=== Processing Graph===")
