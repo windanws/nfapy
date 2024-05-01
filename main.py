@@ -38,11 +38,11 @@ def dataFrameNetwork(packets):
     
 
 
-def graphGen(df):
+def graphGen(df, sampleAmount):
     plt.rcParams['toolbar'] = 'None'
     plt.rcParams['keymap.quit'] = ['ctrl+w']
     print("=== Processing Graph===")
-    df = df.sample(n=100) 
+    df = df.sample(n=sampleAmount) 
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
     plt.figure("Graph", figsize=(12,8), dpi=100)
     nx.draw_networkx(G)
@@ -57,9 +57,11 @@ def printPackets(packets):
 
 def getArgs(argv=None):
     parser = argparse.ArgumentParser(description = "NFApy - Network Forensic Analytical Tool")
+    parser.add_argument("-v", "--version", action="version", version="Nfapy 1.0")
     parser.add_argument("filename", help = "Specify PCAP file")
     parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
-
+    
+    parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
 
     return parser.parse_args(argv)
 
@@ -73,7 +75,7 @@ def main():
 
 
     if args.graph == True:
-        graphGen(df)
+        graphGen(df, args.number)
     else:
         pass
 
