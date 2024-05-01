@@ -28,8 +28,7 @@ def getPackets(pcap):
                 timestamp.append(ts)
             except KeyboardInterrupt:
                 sys.exit(0)
-            except:
-                continue
+            except: continue
     return packets, timestamp
 
 
@@ -38,16 +37,22 @@ def dataFrameNetwork(packets):
     return df 
     
 
+def graphGen(df):
+
+    print("=== Processing Graph===")
+    df = df.sample(n=100) 
+    G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
+    plt.figure(figsize=(7,5), dpi=100)
+    nx.draw_networkx(G)
+
+    
 
 def main():
     packets, timestamps = getPackets(pcapOP)
-    
-    df = dataFrameNetwork(packets)
-    df = df.sample(n=100) 
-    G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
-    nx.draw_networkx(G)
-    plt.show()
 
+    df = dataFrameNetwork(packets)
+    graphGen(df)
+    plt.show()
     '''
     for src_ip, dst_ip in packets:
         print(f"Source IP: {src_ip}\nDestination IP: {dst_ip}\n")
@@ -60,9 +65,5 @@ def main():
 
 
 
-
-
-
 if __name__ == "__main__":
     main()
-
