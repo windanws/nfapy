@@ -32,31 +32,35 @@ def getPackets(pcap):
     return packets, timestamp
 
 
+
 def dataFrameNetwork(packets):
     df = pd.DataFrame(packets, columns=['Source IP', 'Destination IP']) 
     return df 
     
 
-def graphGen(df):
 
+def graphGen(df):
+    plt.rcParams['toolbar'] = 'None'
+    plt.rcParams['keymap.quit'] = ['ctrl+w']
     print("=== Processing Graph===")
     df = df.sample(n=100) 
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
-    plt.figure(figsize=(7,5), dpi=100)
+    plt.figure("Graph", figsize=(12,8), dpi=100)
     nx.draw_networkx(G)
 
-    
 
+def printPackets(packets):
+    for src_ip, dst_ip in packets:
+        print(f"Source IP: {src_ip}\nDestination IP: {dst_ip}\n")
+    
+    
 def main():
     packets, timestamps = getPackets(pcapOP)
 
     df = dataFrameNetwork(packets)
     graphGen(df)
     plt.show()
-    '''
-    for src_ip, dst_ip in packets:
-        print(f"Source IP: {src_ip}\nDestination IP: {dst_ip}\n")
-    '''
+
 
 
 
