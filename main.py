@@ -67,11 +67,16 @@ def getArgs(argv=None):
     parser = argparse.ArgumentParser(description = "NFApy - Network Forensic Analytical Tool")
     parser.add_argument("filename", help = "Specify PCAP file")
 
+    # Toggle Arguments
     parser.add_argument("-v", "--version", action="version", version="Nfapy 1.0")
     parser.add_argument("-s", "--save", action="store_true", help = "Save PCAP file to CSV")
     parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
     
-    parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
+    # IP Address Releated
+    parser.add_argument("-c", "--count", action="store_true", help = "Count Amount of Packets | Specifiy IP Address to Count Total Packet Communcation Amount") 
+
+    # Numeric Value Provided
+    parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes Shown in Graph")
 
 
     return parser.parse_args(argv)
