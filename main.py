@@ -35,9 +35,9 @@ def getPackets(pcap):
 def dataFrameNetwork(packets, timestamps, save):
     df = pd.DataFrame(packets, columns=['Source IP', 'Destination IP']) 
     df.insert(loc=0, column="Time Stamps", value=timestamps)
-
+    timestr = time.strftime("%d-%m_%H-%M-%S")
     if save:
-        df.to_csv("Dataset.csv", index=False)
+        df.to_csv(f"{timestr}_nfapyData.csv", index=False)
     else:
         pass
 
@@ -72,7 +72,7 @@ def getArgs(argv=None):
     parser.add_argument("-v", "--version", action="version", version="Nfapy 1.0")
     parser.add_argument("-s", "--save", action="store_true", help = "Save PCAP file to CSV")
     parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
-    parser.add_argument("-o", "--options", action="store_true", help = "Show Options in Graph") 
+    parser.add_argument("-o", "--options", action="store_true", help = "Show Options in Graph Page") 
 
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
     
