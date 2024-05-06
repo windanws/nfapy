@@ -1,10 +1,10 @@
+import time
 import socket
 import dpkt
 import networkx as nx
 import pandas as pd
 import argparse
 from pyvis.network import Network
-
 
 def getPackets(pcap):
     packets = [] 
@@ -15,10 +15,8 @@ def getPackets(pcap):
         for (ts, buf) in pcap:
             try:
                 eth = dpkt.ethernet.Ethernet(buf)
-
                 if not hasattr(eth.data, 'src'):
                     continue
-
                 ip = eth.data
                 src = socket.inet_ntoa(ip.src)
                 dst = socket.inet_ntoa(ip.dst)
@@ -33,11 +31,14 @@ def getPackets(pcap):
 
 
 
-def dataFrameNetwork(packets, save):
+def dataFrameNetwork(packets, timestamps, save):
     df = pd.DataFrame(packets, columns=['Source IP', 'Destination IP']) 
-    
-    if save == True:
-        df.to_csv("pcaptoCSV.csv", index=False)
+    df.insert(loc=0, column="Time Stamps", value=timestamps)
+
+    if save:
+        df.to_csv("Dataset.csv", index=False)
+    else:
+        pass
 
     return df 
     
@@ -49,10 +50,10 @@ def graphGen(df, sampleAmount):
     df = df.sample(n=sampleAmount) 
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
     nx.draw_networkx(G)
-    nt = Network("720px", "100%")
+    nt = Network("720px", "75%", select_menu=True)
     nt.from_nx(G)
-    nt.show("nx.html", notebook=False)
-
+    nt.show_buttons()
+    nt.show("graph.html", notebook=False)
 
      
 
@@ -71,7 +72,7 @@ def getArgs(argv=None):
     parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
     
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
-
+    
 
     return parser.parse_args(argv)
 
@@ -80,18 +81,17 @@ def getArgs(argv=None):
 def main():
     args = getArgs()
 
-    packets, timestamps = getPackets(args.filename)
-   
-    if args.save == True:
-        df = dataFrameNetwork(packets, True)
-    else:
-        df = dataFrameNetwork(packets, False)
+    if args.filename.endswith(".pcap"):
+        packets, timestamps = getPackets(args.filename)
+        df = dataFrameNetwork(packets, timestamps, args.save)
+        if args.graph:
+            graphGen(df, args.number)
+        else:
+            pass
+    elif args.filename.endswith(".csv"):
+        return
 
 
-    if args.graph == True:
-        graphGen(df, args.number)
-    else:
-        pass
 
 
 
