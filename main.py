@@ -6,6 +6,7 @@ import pandas as pd
 import argparse
 from pyvis.network import Network
 
+
 def getPackets(pcap):
     packets = [] 
     timestamp = []
@@ -44,18 +45,19 @@ def dataFrameNetwork(packets, timestamps, save):
     
 
 
-def graphGen(df, sampleAmount):
+def graphGen(df, sampleAmount, options):
 
     print("=== Processing Graph===")
     df = df.sample(n=sampleAmount) 
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
-    nx.draw_networkx(G)
-    nt = Network("720px", "75%", select_menu=True)
+    nt = Network(height = "800px", width = "100%", filter_menu=True)
     nt.from_nx(G)
-    nt.show_buttons()
+    if options:
+        nt.width="70%"
+        nt.show_buttons()
     nt.show("graph.html", notebook=False)
 
-     
+
 
 def printPackets(packets):
     for src_ip, dst_ip in packets:
@@ -70,7 +72,8 @@ def getArgs(argv=None):
     parser.add_argument("-v", "--version", action="version", version="Nfapy 1.0")
     parser.add_argument("-s", "--save", action="store_true", help = "Save PCAP file to CSV")
     parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
-    
+    parser.add_argument("-o", "--options", action="store_true", help = "Show Options in Graph") 
+
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
     
 
@@ -85,13 +88,15 @@ def main():
         packets, timestamps = getPackets(args.filename)
         df = dataFrameNetwork(packets, timestamps, args.save)
         if args.graph:
-            graphGen(df, args.number)
+            graphGen(df, args.number, args.options)
         else:
             pass
     elif args.filename.endswith(".csv"):
         return
-
-
+    else:
+        print("Invaild File Type \nPlease Use -h to Get More Information")
+        pass
+    
 
 
 
