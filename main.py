@@ -50,7 +50,7 @@ def graphGen(df, sampleAmount, options):
     print("=== Processing Graph===")
     df = df.sample(n=sampleAmount) 
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
-    nt = Network(height = "800px", width = "100%", filter_menu=True)
+    nt = Network(height = "800px", width = "100%", select_menu=True)
     nt.from_nx(G)
     if options:
         nt.width="70%"
@@ -75,7 +75,6 @@ def getArgs(argv=None):
     parser.add_argument("-o", "--options", action="store_true", help = "Show Options in Graph Page") 
 
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
-    
 
     return parser.parse_args(argv)
 
