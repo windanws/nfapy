@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+#lang: utf-8
 
 import time
 import re
@@ -58,7 +59,6 @@ def dataFrameNetwork(packets, timestamps, save):
 
 # Creating Graph
 def graphGen(df, sampleAmount, options):
-
     print("=== Processing Graph===")
     df = df.sample(n=sampleAmount) 
     G = nx.from_pandas_edgelist(df, source='Source IP', target='Destination IP', create_using=nx.DiGraph())
@@ -69,7 +69,7 @@ def graphGen(df, sampleAmount, options):
         nt.show_buttons()
 
     if sampleAmount > 100:
-        pos = nx.circular_layout(G, scale=sampleAmount*2)
+        pos = nx.circular_layout(G, scale=sampleAmount*0.2)
         for node in nt.get_nodes():
             nt.get_node(node)['x']=pos[node][0]
             nt.get_node(node)['y']=-pos[node][1]
@@ -83,8 +83,12 @@ def graphGen(df, sampleAmount, options):
 
 # Counting Addresses from Specific Address
 def countPackets(df, ipAddr):
-    out = df.eq(ipAddr).any()
-    print(out)
+    matching = df[df.apply(lambda row: ipAddr in row.values, axis=1)]
+    if not matching.empty:
+        pAmount = len(matching)
+        print(f"{ipAddr} Totals - {pAmount}")
+    else:
+        print("\nNo Match Found\nPlease Ensure the Correct Address is Inputted")
 
 
 
@@ -116,13 +120,13 @@ def getArgs(argv=None):
     parser.add_argument("filename", help = "Specify PCAP file")
 
     parser.add_argument("-v", "--version", action="version", version="Nfapy 1.0")
-    parser.add_argument("-s", "--save", action="store_true", help = "Save PCAP file to CSV")
-    parser.add_argument("-g", "--graph", action="store_true", help = "Create Network Graph from PCAP File")
-    parser.add_argument("-o", "--options", action="store_true", help = "Show Options in Graph Page") 
+    parser.add_argument("-s", "--save", action="store_true", help="Save PCAP file to CSV")
+    parser.add_argument("-g", "--graph", action="store_true", help="Create Network Graph from PCAP File")
+    parser.add_argument("-o", "--options", action="store_true", help="Show Options in Graph Page") 
 
-    parser.add_argument("-l", "--list", action="store", help = "")
+    parser.add_argument("-l", "--list", action="store", help="List Address and Associated Addresses")
+    parser.add_argument("-c", "--count", action="store", help = "Count specific IP address\n Left Empty Will Count Total of the File")
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
-    parser.add_argument("-c", "--count", action="store", help = "Count specific IP address\n Left Empty Count Total in Provided File")
 
     return parser.parse_args(argv)
 
@@ -139,7 +143,7 @@ def main():
         if args.graph:
             graphGen(df, args.number, args.options)
         elif args.count:
-            countPackets(df, arg.count)
+            countPackets(df, args.count)
         elif args.list:
             listAddress(df, args.list)
         else:
