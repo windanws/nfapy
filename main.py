@@ -13,6 +13,7 @@ from pyvis.network import Network
 import argparse
 
 
+# Seperating SRC and DST from pcap file
 def getPackets(pcap):
     packets = [] 
     timestamp = []
@@ -34,13 +35,14 @@ def getPackets(pcap):
                 sys.exit(0)
             except: 
                 continue
-        
         mmapFile.close()
+
         
     return packets, timestamp
 
 
 
+# Creating DataFrame (.CSV)
 def dataFrameNetwork(packets, timestamps, save):
     df = pd.DataFrame(packets, columns=['Source IP', 'Destination IP']) 
     df.insert(loc=0, column="Time Stamps", value=timestamps)
@@ -54,6 +56,7 @@ def dataFrameNetwork(packets, timestamps, save):
     
 
 
+# Creating Graph
 def graphGen(df, sampleAmount, options):
 
     print("=== Processing Graph===")
@@ -78,12 +81,14 @@ def graphGen(df, sampleAmount, options):
 
 
 
+# Counting Addresses from Specific Address
 def countPackets(df, ipAddr):
     out = df.eq(ipAddr).any()
     print(out)
 
 
 
+# Listing Out Addresses
 def listAddress(df, ipAddr):
     print("=== Matching Beginning ===")
     matching = df[df.apply(lambda row: ipAddr in row.values, axis=1)]
@@ -105,7 +110,7 @@ def test():
 
 
 
-
+# Arguments
 def getArgs(argv=None):
     parser = argparse.ArgumentParser(description = "NFApy - Network Forensic Analytical Tool")
     parser.add_argument("filename", help = "Specify PCAP file")
@@ -123,6 +128,7 @@ def getArgs(argv=None):
 
 
 
+# Main Function
 def main():
     args = getArgs()
 
@@ -143,7 +149,6 @@ def main():
     else:
         print("Invaild File Type \nPlease Use -h to Get More Information")
         pass
-
 
 
 
