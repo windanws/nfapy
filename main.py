@@ -14,6 +14,7 @@ from pyvis.network import Network
 import argparse
 
 
+
 # Seperating SRC and DST from pcap file
 def getPackets(pcap):
     packets = [] 
@@ -125,7 +126,7 @@ def getArgs(argv=None):
     parser.add_argument("-o", "--options", action="store_true", help="Show Options in Graph Page") 
 
     parser.add_argument("-l", "--list", action="store", help="List Address and Associated Addresses")
-    parser.add_argument("-c", "--count", action="store", help = "Count specific IP address\n Left Empty Will Count Total of the File")
+    parser.add_argument("-c", "--count", action="store", help = "Count Amount of Packetse Related to Specific Address\n Left Empty Will Count Total of the File")
     parser.add_argument("-n", "--number", nargs="?", const=100, default=100, type=int, help = "Number of Nodes in Graph")
 
     return parser.parse_args(argv)
